@@ -11,8 +11,8 @@ let col = 0;
 const radius = 20; // arc radius
 const color = '#64ffda';
 const lineWidth = 4;
-const heightSize = height/radius;
-const widthSize = width/radius;
+const heightSize = height/(radius * 2.5);
+const widthSize = width/(radius * 2.5);
 const circles = new Array(heightSize).fill(new Array(1));
 
 const createCircle = (rowIndex, columnIndex) => {
@@ -21,16 +21,8 @@ const createCircle = (rowIndex, columnIndex) => {
     const x = 25 + columnIndex * 50; // x coordinate
     const y = 25 + rowIndex * 50; // y coordinate
     const startAngle = Math.random() * (Math.PI * 2); // Starting point on circle
-    let endAngle = Math.PI + (Math.PI * columnIndex) / 2;
+    let endAngle = Math.random() * Math.PI + (Math.PI * columnIndex) / 2;
     let anticlockwise = rowIndex % 2 == 1; // Draw anticlockwise
-    
-    circles[row][col] = {
-        x,
-        y,
-        startAngle,
-        endAngle,
-        anticlockwise,
-    };
     
 
     if (col < widthSize) {
@@ -39,46 +31,61 @@ const createCircle = (rowIndex, columnIndex) => {
         row += 1;
         col = 0;
     }
+
+    return {
+        x,
+        y,
+        startAngle,
+        endAngle,
+        anticlockwise,
+    };
 };
 
 const drawCircle = (rowIndex, colIntex) => {
-    createCircle(rowIndex, colIntex);
-    ctx.beginPath();
-    ctx.arc(
-        circles[rowIndex][colIntex].x, 
-        circles[rowIndex][colIntex].y, 
-        radius, 
-        circles[rowIndex][colIntex].startAngle, 
-        circles[rowIndex][colIntex].endAngle, 
-        circles[rowIndex][colIntex].anticlockwise,
-    );
-    ctx.strokeStyle = color;
-    ctx.fillStyle = color;
-    ctx.lineWidth = lineWidth;
-
-    if( Math.random() > 0.5) {
-        ctx.fill();
-    } else {
-        ctx.stroke();
-    }
-}
-
-// draw shapes
-const renderCircles = () => {
+    const circle = createCircle(rowIndex, colIntex);
     for(let i = 0; i <= heightSize; i++) {
         for (let j = 0; j <= widthSize; j++) {
-            
-            if (i < heightSize) {
-                drawCircle(i, j);
-                
+            console.log(circle);
+            ctx.beginPath();
+            ctx.arc(
+                circle.x, 
+                circle.y, 
+                radius, 
+                circle.startAngle, 
+                circle.endAngle, 
+                circle.anticlockwise,
+            );
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+            ctx.lineWidth = lineWidth;
+        
+            if( Math.random() > 0.5) {
+                ctx.fill();
             } else {
-                console.log('should end here');
-                break;
+                ctx.stroke();
             }
         }
-        console.log('circles', circles);
     }
+    console.log('row', row, 'col', col);
+}
+
+const clearCanvas = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 
-renderCircles();
+let x = 0;
+let y = 0;
+
+let timerId = setTimeout(function run() {
+    drawCircle(row, col);
+    setTimeout(run, 100);
+
+    if(row === heightSize) {
+        clearTimeout(timerId);
+        row = 0;
+        col = 0;
+        setTimeout(clearCanvas, 100);
+    }
+}, 100, x, y);
+
