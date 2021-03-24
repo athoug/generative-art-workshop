@@ -35,9 +35,9 @@ const sketch = () => {
       const y = lerp(margin, (height - margin), v);
 
       context.beginPath();
-      context.arc(x, y, 50, 0, Math.PI * 2, false);
+      context.arc(x, y, width * .025, 0, Math.PI * 2, false);
       context.strokeStyle = '#F5F5F6';
-      context.lineWidth = 20;
+      context.lineWidth = width * .01;
       context.stroke();
     });
   };
