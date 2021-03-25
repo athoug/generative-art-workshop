@@ -1,6 +1,5 @@
 const canvasSketch = require('canvas-sketch');
 const { lerp } = require('canvas-sketch-util/math');
-const { random } = require('canvas-sketch-util/random');
 
 
 const settings = {
@@ -31,7 +30,7 @@ const sketch = () => {
 
     return points; // we return the points
   };
-
+  // we add a filter to make it more intresting
   const points = createGrid().filter(() => Math.random() > 0.5);
   const margin = 400;
 
