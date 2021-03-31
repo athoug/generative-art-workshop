@@ -36,6 +36,7 @@ const sketch = () => {
   const points = createGrid().filter(() => random.value() > 0.5);
   const margin = 400;
 
+  console.log(points);
   return ({ context, width, height }) => {
     context.fillStyle = 'white';
     context.fillRect(0, 0, width, height);
