@@ -71,11 +71,7 @@ const sketch = () => {
       const x = lerp(margin, (width - margin), u);
       const y = lerp(margin, (height - margin), v);
 
-      // context.beginPath();
-      // context.arc(x, y, radius * width, 0, Math.PI * 2, false); // we multiplied teh radies by the width to have a relative size based on screen
-      // context.fillStyle = color;
-      // context.fill();
-
+    
       context.save();
       context.fillStyle = color;
       // to have a dynamic size we use a template string for radius, we multiply it by the width becuase the size is small
