@@ -6,6 +6,7 @@ require("three/examples/js/controls/OrbitControls");
 
 const canvasSketch = require("canvas-sketch");
 const random = require('canvas-sketch-util/random');
+const palettes = require('nice-color-palettes');
 
 const settings = {
   // Make the loop animated
@@ -34,23 +35,38 @@ const sketch = ({ context }) => {
   // Setup a geometry
   const geometry = new THREE.BoxGeometry(1, 1, 1);
 
-  // Setup a material
-  const material = new THREE.MeshBasicMaterial({
-    color: "red",
-  });
+  // Setup a color palette
+  const palette = random.pick(palettes);
 
-
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 40; i++) {
     // Setup a mesh with geometry + material
-    const mesh = new THREE.Mesh(geometry, material);
+    const mesh = new THREE.Mesh(geometry,  
+      // we changed the mesh to obby lighting rules (basic ignores light)
+      new THREE.MeshStandardMaterial({
+      color: random.pick(palette),
+    }));
     mesh.position.set(
       random.range(-1, 1), // x
       random.range(-1, 1), // y
       random.range(-1, 1), // z
-    )
-    mesh.scale.multiplyScalar(0.1);
+    );
+    mesh.scale.set(
+      random.range(-1, 1), // x
+      random.range(-1, 1), // y
+      random.range(-1, 1), // z
+    );
+
+    mesh.scale.multiplyScalar(0.5);
     scene.add(mesh);
   }
+
+  // add ambient light 
+  // we add ambient light to make the dark areas that don't get light have a different color
+  scene.add(new THREE.AmbientLight('hsl(0, 0%, 40%)'));
+  // add a light
+  const light = new THREE.DirectionalLight('white', 1); // direction light acts like the sun and the places that don't get sunlight are black
+  light.position.set(0, 0, 4);
+  scene.add(light);
 
   // draw each frame
   return {
