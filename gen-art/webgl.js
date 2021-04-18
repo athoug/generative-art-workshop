@@ -9,16 +9,22 @@ const random = require('canvas-sketch-util/random');
 const palettes = require('nice-color-palettes');
 
 const settings = {
+  // set dimentions for gif export
+  dimensions: [512, 512],
+  fps: 24, 
+  duration: 4,
   // Make the loop animated
   animate: true,
   // Get a WebGL canvas rather than 2D
-  context: "webgl"
+  context: "webgl",
+  // Turn on MSAA
+  attributes: { antialias: true }
 };
 
-const sketch = ({ context }) => {
+const sketch = ({ context, width, height }) => {
   // Create a renderer
   const renderer = new THREE.WebGLRenderer({
-    canvas: context.canvas
+    context
   });
 
   // WebGL background color
@@ -46,17 +52,17 @@ const sketch = ({ context }) => {
       color: random.pick(palette),
     }));
     mesh.position.set(
-      random.range(-1, 1), // x
-      random.range(-1, 1), // y
-      random.range(-1, 1), // z
+      random.range(-0.85, 0.9), // x
+      random.range(-0.85, 0.9), // y
+      random.range(-0.85, 0.9), // z
     );
     mesh.scale.set(
-      random.range(-1, 1), // x
-      random.range(-1, 1), // y
-      random.range(-1, 1), // z
+      random.range(-0.85, 0.9), // x
+      random.range(-0.85, 0.9), // y
+      random.range(-0.85, 0.9), // z
     );
 
-    mesh.scale.multiplyScalar(0.5);
+    mesh.scale.multiplyScalar(0.45);
     scene.add(mesh);
   }
 
@@ -65,7 +71,7 @@ const sketch = ({ context }) => {
   scene.add(new THREE.AmbientLight('hsl(0, 0%, 40%)'));
   // add a light
   const light = new THREE.DirectionalLight('white', 1); // direction light acts like the sun and the places that don't get sunlight are black
-  light.position.set(0, 0, 4);
+  light.position.set(0, 0, 2);
   scene.add(light);
 
   // draw each frame
@@ -97,9 +103,10 @@ const sketch = ({ context }) => {
       // Update the camera
       camera.updateProjectionMatrix();
     },
+
     // Update & render your scene here
-    render({ time }) {
-      scene.rotation.z = time;
+    render({ playhead }) {
+      scene.rotation.z = playhead * Math.PI * 2;
       renderer.render(scene, camera);
     },
     // Dispose of events & renderer for cleaner hot-reloading
