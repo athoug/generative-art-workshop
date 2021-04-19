@@ -7,6 +7,8 @@ require("three/examples/js/controls/OrbitControls");
 const canvasSketch = require("canvas-sketch");
 const random = require('canvas-sketch-util/random');
 const palettes = require('nice-color-palettes');
+const eases = require('eases');
+const BezierEasing = require('bezier-easing');
 
 const settings = {
   // set dimentions for gif export
@@ -74,6 +76,8 @@ const sketch = ({ context, width, height }) => {
   light.position.set(0, 0, 2);
   scene.add(light);
 
+  const easeFn = BezierEasing(0.67,0.03,0.29,0.99);
+
   // draw each frame
   return {
     // Handle resize events here
@@ -106,7 +110,8 @@ const sketch = ({ context, width, height }) => {
 
     // Update & render your scene here
     render({ playhead }) {
-      scene.rotation.z = Math.sin(playhead * Math.PI * 2) * 2;
+      const t = Math.sin(playhead * Math.PI);
+      scene.rotation.z = easeFn(t);
       renderer.render(scene, camera);
     },
     // Dispose of events & renderer for cleaner hot-reloading
