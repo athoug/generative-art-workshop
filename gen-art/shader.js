@@ -18,8 +18,8 @@ const frag = glsl(/* glsl */`
   varying vec2 vUv;
 
   void main () {
-    vec3 colorA = vec3(1.0, 0.0, 0.0);
-    vec3 colorB = vec3(0.0, 1.0, 0.0);
+    vec3 colorA = vec3(0.792,0.02,0.302);
+    vec3 colorB = vec3(0.643,0.831,0.706);
 
     vec2 center = vUv - 0.5;
     center.x *= aspect;
