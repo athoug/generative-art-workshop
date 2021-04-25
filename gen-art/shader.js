@@ -26,7 +26,15 @@ const frag = glsl(/* glsl */`
     float dist = length(center);
 
     vec3 color = mix(colorA, colorB, vUv.x);
-    gl_FragColor = vec4(color, dist > 0.25 ? 0.0 : 1.0);
+
+    // we have a rigid transition from 0 to 1 and that's why we don't have a smooth circle 
+    // to fix that we do a smooth transition 
+    // this is a step function it says if the first param is less that the second one return 0 otherwise 1
+    // float alpha = step(dist, 0.25);
+    // now the top did nothing diffrent from what we had before, so instead of it we'll use a function called smoothStep
+    float alpha = smoothstep(0.255, 0.25, dist);
+
+    gl_FragColor = vec4(color, alpha); 
   }
 `);
 
@@ -34,6 +42,8 @@ const frag = glsl(/* glsl */`
 const sketch = ({ gl }) => {
   // Create the shader and return it
   return createShader({
+    // set the background
+    clearColor: 'white', // if set to false I get a clear transparent background
     // Pass along WebGL context
     gl,
     // Specify fragment and/or vertex shader strings
