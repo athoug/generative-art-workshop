@@ -18,14 +18,17 @@ const frag = glsl(/* glsl */`
   varying vec2 vUv;
 
   void main () {
-    vec3 colorA = vec3(0.792,0.02,0.302);
+    // 1. we can play around with the color and give it a variable which eilds interesting color animation
+    vec3 colorA = sin(time) + vec3(0.792,0.02,0.302);
     vec3 colorB = vec3(0.643,0.831,0.706);
 
     vec2 center = vUv - 0.5;
     center.x *= aspect;
     float dist = length(center);
 
-    vec3 color = mix(colorA, colorB, vUv.x);
+    // 2. we can play with the gradient by changing the vUv to y or even x + y
+    // and better yet to checg directions multiply by the time of course a sign function
+    vec3 color = mix(colorA, colorB, vUv.y + vUv.x * cos(time));
 
     // we have a rigid transition from 0 to 1 and that's why we don't have a smooth circle 
     // to fix that we do a smooth transition 
