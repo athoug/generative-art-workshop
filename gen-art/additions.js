@@ -1,0 +1,68 @@
+const canvasSketch = require('canvas-sketch');
+const createShader = require('canvas-sketch-util/shader');
+const glsl = require('glslify');
+
+// Setup our sketch
+const settings = {
+  context: 'webgl',
+  dimensions: [512, 512],
+  animate: true,
+  duration: 4,
+  fps: 24,
+};
+
+// Your glsl code
+const frag = glsl(/* glsl */`
+  precision highp float;
+
+  uniform float playhead;
+  uniform float aspect;
+  varying vec2 vUv;
+
+  #pragma glslify: noise = require('glsl-noise/simplex/3d');
+  #pragma glslify: hsl2rgb = require('glsl-hsl2rgb');
+  
+  void main () {
+    // vec3 colorA = sin(playhead) + vec3(0.792,0.02,0.302);
+    // vec3 colorB = vec3(0.643,0.831,0.706);
+
+    vec2 center = vUv - 0.5;
+    center.x *= aspect;
+    float dist = length(center);
+
+    
+    // vec3 color = mix(colorA, colorB, vUv.y + vUv.x * cos(time));
+    float alpha = smoothstep(0.255, 0.25, dist);
+
+    // gl_FragColor = vec4(color, alpha); 
+
+    float n = noise(vec3(center * 0.5, playhead * 0.55));
+    vec3 color = hsl2rgb(
+      // (n * 0.5 + 0.5), 
+      0.6 + n * 0.2,
+      0.5,
+      0.5);
+    gl_FragColor = vec4(color, alpha); 
+  }
+`);
+
+// Your sketch, which simply returns the shader
+const sketch = ({ gl }) => {
+  // Create the shader and return it
+  return createShader({
+    // set the background
+    clearColor: 'white', // if set to false I get a clear transparent background
+    // Pass along WebGL context
+    gl,
+    // Specify fragment and/or vertex shader strings
+    frag,
+    // Specify additional uniforms to pass down to the shaders
+    uniforms: {
+      // Expose props from canvas-sketch
+      playhead: ({ playhead }) => playhead,
+      aspect: ({ width, height}) => width / height,
+    }
+  });
+};
+
+canvasSketch(sketch, settings);
